@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2025 ZitaoTech
- * Customized for PilotXing
+ * Copyright (c) 2023-2025 ZitaoTech
+ * Customized for PilotXing (with hardware-safe mod-morph)
  * SPDX-License-Identifier: MIT
  */
 
@@ -18,13 +18,74 @@
 #define SYS     2
 #define HW      3
 
+#define SL_MO(layer) &sl_mo layer layer
+
 &sl {
     release-after-ms = <3000>;
 };
 
 / {
     behaviors {
-        // --- Custom Mod-Morphs (Tap unshifted, Shift consumed & inverted) ---
+        // --- 1. Original Factory Behaviors (Preserved 100% in exact order to prevent ID shifting) ---
+        td0: tap_dance_0 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <400>;
+            bindings = <&mkp LCLK>, <&bt BT_CLR>;
+        };
+
+        td_boot_out: td_boot_out {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <400>;            
+            bindings = <&bootloader>, <&out OUT_TOG>;
+        };
+
+        tdc_to_SYM: td_comma_to_layer {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <400>;
+            bindings = <&kp SEMI>, <&to SYM>;
+        };
+
+        tdc_to_MEDIA: td_mute_to_layer {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <400>;
+            bindings = <&kp C_MUTE>, <&to SYS>;
+        };
+
+        td_kp_bleclear: td_kp_bleclear {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <400>;            
+            bindings = <&kp SPACE>, <&bt BT_CLR>;
+        };
+
+        hm: homerow_mods {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            tapping-term-ms = <400>;
+            bindings = <&kp>, <&kp>;
+        };
+    
+        sl_mo: behavior_sl_mo {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <450>;
+            bindings = <&mo>, <&sl>;
+        };
+
+        sk_kp: behavior_sk_kp {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <450>;
+            bindings = <&kp>, <&sk>;
+        };
+
+        // --- 2. Custom Mod-Morphs appended at end (Tap unshifted, Shift consumed & inverted) ---
         under_morph: under_morph {
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
@@ -45,22 +106,6 @@
             bindings = <&kp COLON>, <&kp SEMI>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
-
-        // --- Tap Dances & Compound Behaviors ---
-        td_boot_out: td_boot_out {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <400>;            
-            bindings = <&bootloader>, <&out OUT_TOG>;
-        };
-
-        sl_mo: behavior_sl_mo {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";      
-            tapping-term-ms = <450>;       
-            bindings = <&mo>, <&sl>;       
-        };
     };
 
     keymap {
@@ -74,10 +119,10 @@
 // | Cmd  |  Z   |  X   |  C   |  V   |  B   |  N   |  M   | TO 1 | RCtrl/Ent  |
 // | LShift/Esc | SL/MO L1 | LAlt/Space | SL/MO L1 | RShift/Caps |
 // --------------------------------------------------------------------------------------------------------------------------
-    &kp Q        &kp W      &kp E       &kp R     &kp T       &kp Y         &kp U        &kp I      &kp O        &kp P
-    &kp A        &kp S      &kp D       &kp F     &kp G       &kp H         &kp J        &kp K      &kp L        &kp BSPC
-    &mt LGUI TAB &kp Z      &kp X       &kp C     &kp V       &kp B         &kp N        &kp M      &to SYM      &mt RCTRL ENTER
-    &mt LSHFT ESC           &sl_mo SYM SYM        &mt LALT SPACE            &sl_mo SYM SYM          &mt RSHFT CLCK
+    &kp Q        &kp W      &kp E       &kp R     &kp T         &kp Y             &kp U            &kp I            &kp O            &kp P
+    &kp A        &kp S      &kp D       &kp F     &kp G         &kp H             &kp J            &kp K            &kp L            &kp BSPC
+    &mt LGUI TAB &kp Z      &kp X       &kp C     &kp V         &kp B             &kp N            &kp M            &to SYM          &mt RCTRL ENTER
+    &mt LSHFT ESC           &sl_mo SYM SYM        &mt LALT SPACE                  &sl_mo SYM SYM                    &mt RSHFT CLCK
             >;
         };
 
@@ -89,10 +134,10 @@
 // | Cmd  |  7   |  8   | 9 (  | 0 )  | , <  | . >  | : ;  | TO 0 | RCtrl/Ent  |
 // | LShift/Esc |  TO 3   | LAlt/Space |   TO 2   | RShift/Caps |
 // --------------------------------------------------------------------------------------------------------------------------
-    &kp HASH     &kp N1     &kp N2      &kp N3    &kp LBKT    &kp RBKT      &kp UP       &under_morph &plus_morph  &kp BSLH
-    &kp GRAVE    &kp N4     &kp N5      &kp N6    &kp FSLH    &kp LEFT      &kp DOWN     &kp RIGHT    &kp APOS     &kp BSPC
-    &mt LGUI TAB &kp N7     &kp N8      &kp N9    &kp N0      &kp COMMA     &kp DOT      &colon_morph &to DEFAULT  &mt RCTRL ENTER
-    &mt LSHFT ESC           &to HW                &mt LALT SPACE            &to SYS                   &mt RSHFT CLCK
+    &kp HASH     &kp N1     &kp N2      &kp N3    &kp LBKT      &kp RBKT          &kp UP           &under_morph     &plus_morph      &kp BSLH
+    &kp GRAVE    &kp N4     &kp N5      &kp N6    &kp FSLH      &kp LEFT          &kp DOWN         &kp RIGHT        &kp APOS         &kp BSPC
+    &mt LGUI TAB &kp N7     &kp N8      &kp N9    &kp N0        &kp COMMA         &kp DOT          &colon_morph     &to DEFAULT      &mt RCTRL ENTER
+    &mt LSHFT ESC           &to HW                &mt LALT SPACE                  &to SYS                           &mt RSHFT CLCK
             >;
         };
 
@@ -104,10 +149,10 @@
 // | Cmd  | Prev | Next | Bri- | Bri+ | PgUp | PgDn | Lock | TO 0 | RCtrl/Ent  |
 // | LShift/Esc |  TO 1   | LAlt/Space |   TO 0   |   TO 0      |
 // --------------------------------------------------------------------------------------------------------------------------
-    &kp F1       &kp F2     &kp F3      &kp F4       &kp F5       &kp F6        &kp C_VOL_DN &kp C_VOL_UP &kp C_MUTE &kp C_PP
-    &kp F7       &kp F8     &kp F9      &kp F10      &kp F11      &kp F12       &kp PRINTSCREEN &kp DEL   &kp INS    &kp BSPC
-    &mt LGUI TAB &kp C_PREV &kp C_NEXT  &kp C_BRI_DN &kp C_BRI_UP &kp PG_UP     &kp PG_DN    &kp C_AL_LOCK &to DEFAULT &mt RCTRL ENTER
-    &mt LSHFT ESC           &to SYM                  &mt LALT SPACE             &to DEFAULT               &to DEFAULT
+    &kp F1       &kp F2     &kp F3      &kp F4       &kp F5       &kp F6          &kp C_VOL_DN     &kp C_VOL_UP     &kp C_MUTE       &kp C_PP
+    &kp F7       &kp F8     &kp F9      &kp F10      &kp F11      &kp F12         &kp PRINTSCREEN  &kp DEL          &kp INS          &kp BSPC
+    &mt LGUI TAB &kp C_PREV &kp C_NEXT  &kp C_BRI_DN &kp C_BRI_UP &kp PG_UP       &kp PG_DN        &kp C_AL_LOCK    &to DEFAULT      &mt RCTRL ENTER
+    &mt LSHFT ESC           &to SYM                  &mt LALT SPACE               &to DEFAULT                       &to DEFAULT
             >;
         };
 
@@ -119,10 +164,10 @@
 // | Cmd  | Flash| USB  | BLE  | Pwr  | none | none | none | TO 0 | RCtrl/Ent  |
 // | TO 0       |  TO 1   | LAlt/Space |   TO 0   |   TO 0      |
 // --------------------------------------------------------------------------------------------------------------------------
-    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &bt BT_SEL 5 &rgb_ug RGB_TOG &rgb_ug RGB_EFF &rgb_ug RGB_BRI &bt BT_CLR
-    &bl BL_TOG   &bl BL_DEC   &bl BL_INC   &rgb_ug RGB_BRD &none     &none        &none           &none           &none           &kp BSPC
-    &mt LGUI TAB &td_boot_out &out OUT_USB &out OUT_BLE &ext_power EP_TOG &none   &none           &none           &to DEFAULT     &mt RCTRL ENTER
-    &to DEFAULT               &to SYM                   &mt LALT SPACE                &to DEFAULT                     &to DEFAULT
+    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &bt BT_SEL 5 &rgb_ug RGB_TOG  &rgb_ug RGB_EFF  &rgb_ug RGB_BRI  &bt BT_CLR
+    &bl BL_TOG   &bl BL_DEC   &bl BL_INC   &rgb_ug RGB_BRD &none     &none        &none            &none            &none            &kp BSPC
+    &mt LGUI TAB &td_boot_out &out OUT_USB &out OUT_BLE &ext_power EP_TOG &none   &none            &none            &to DEFAULT      &mt RCTRL ENTER
+    &to DEFAULT               &to SYM                   &mt LALT SPACE                &to DEFAULT                       &to DEFAULT
             >;
         };
     };
