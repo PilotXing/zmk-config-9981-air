@@ -112,19 +112,27 @@
             bindings = <&kp COLON>, <&kp SEMI>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
+
+        caps_ht: caps_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&kp>, <&caps_word>;
+        };
     };
 
     combos {
         compatible = "zmk,combos";
         combo_caps_word {
-            timeout-ms = <50>;
+            timeout-ms = <150>;
             key-positions = <30 34>;
             bindings = <&caps_word>;
             layers = <0>;
         };
 
         combo_caps_lock {
-            timeout-ms = <50>;
+            timeout-ms = <100>;
             key-positions = <31 33>;
             bindings = <&kp CAPSLOCK>;
             layers = <0>;
@@ -160,7 +168,7 @@
     &kp HASH     &kp N1     &kp N2      &kp N3    &kp LBKT      &kp RBKT          &kp UP           &under_morph     &plus_morph      &kp BSLH
     &kp GRAVE    &kp N4     &kp N5      &kp N6    &kp FSLH      &kp LEFT          &kp DOWN         &kp RIGHT        &kp APOS         &kp BSPC
     &mt LGUI TAB &kp N7     &kp N8      &kp N9    &kp N0        &kp COMMA         &kp DOT          &colon_morph     &to DEFAULT      &mt RCTRL ENTER
-    &mt LSHFT ESC           &to HW                &mt LALT SPACE                  &to SYS                           &mt RSHFT CAPSLOCK
+    &caps_ht LSHFT 0        &to HW                &mt LALT SPACE                  &to SYS                           &mt RSHFT CAPSLOCK
             >;
         };
 
