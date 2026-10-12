@@ -112,6 +112,38 @@
             bindings = <&kp COLON>, <&kp SEMI>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
+
+        caps_ht: caps_ht {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <0>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <300>;
+            bindings = <&m_caps_lock>, <&m_caps_word>;
+        };
+    };
+
+    macros {
+        m_caps_word: m_caps_word {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&caps_word>;
+        };
+
+        m_caps_lock: m_caps_lock {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp CAPSLOCK>;
+        };
+    };
+
+    combos {
+        compatible = "zmk,combos";
+        combo_caps {
+            timeout-ms = <50>;
+            key-positions = <30 34>;
+            bindings = <&caps_ht>;
+            layers = <0>;
+        };
     };
 
     keymap {
@@ -143,7 +175,7 @@
     &kp HASH     &kp N1     &kp N2      &kp N3    &kp LBKT      &kp RBKT          &kp UP           &under_morph     &plus_morph      &kp BSLH
     &kp GRAVE    &kp N4     &kp N5      &kp N6    &kp FSLH      &kp LEFT          &kp DOWN         &kp RIGHT        &kp APOS         &kp BSPC
     &mt LGUI TAB &kp N7     &kp N8      &kp N9    &kp N0        &kp COMMA         &kp DOT          &colon_morph     &to DEFAULT      &mt RCTRL ENTER
-    &mt LSHFT ESC           &to HW                &mt LALT SPACE                  &to SYS                           &mt RSHFT CLCK
+    &mt LSHFT ESC           &to HW                &mt LALT SPACE                  &to SYS                           &mt RSHFT CAPSLOCK
             >;
         };
 
