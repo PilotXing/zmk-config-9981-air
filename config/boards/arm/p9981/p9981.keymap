@@ -112,36 +112,21 @@
             bindings = <&kp COLON>, <&kp SEMI>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
-
-        caps_ht: caps_ht {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <0>;
-            flavor = "tap-preferred";
-            tapping-term-ms = <300>;
-            bindings = <&m_caps_lock>, <&m_caps_word>;
-        };
-    };
-
-    macros {
-        m_caps_word: m_caps_word {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&caps_word>;
-        };
-
-        m_caps_lock: m_caps_lock {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&kp CAPSLOCK>;
-        };
     };
 
     combos {
         compatible = "zmk,combos";
-        combo_caps {
+        combo_caps_word {
             timeout-ms = <50>;
             key-positions = <30 34>;
-            bindings = <&caps_ht>;
+            bindings = <&caps_word>;
+            layers = <0>;
+        };
+
+        combo_caps_lock {
+            timeout-ms = <50>;
+            key-positions = <31 33>;
+            bindings = <&kp CAPSLOCK>;
             layers = <0>;
         };
     };
