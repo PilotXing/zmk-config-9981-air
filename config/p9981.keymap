@@ -24,6 +24,12 @@
     release-after-ms = <3000>;
 };
 
+&mt {
+    flavor = "balanced";
+    tapping-term-ms = <200>;
+    quick-tap-ms = <150>;
+};
+
 / {
     behaviors {
         // --- 1. Original Factory Behaviors (Preserved 100% in exact order to prevent ID shifting) ---
